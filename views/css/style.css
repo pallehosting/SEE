@@ -1,0 +1,363 @@
+/* Stile generale */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+/* Tema scuro */
+body.dark-theme {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Header */
+.main-header {
+  text-align: center;
+  padding: 2rem 0;
+  background-color: #ffffff;
+  color: #333;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .main-header {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.main-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+}
+
+.main-header p {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .theme-toggle {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Main content */
+.main-content {
+  padding: 2rem 0;
+}
+
+/* Forms */
+.login-form,
+.register-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+body.dark-theme .login-form,
+body.dark-theme .register-form {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.form-group.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #333;
+}
+
+body.dark-theme .form-group input {
+  background-color: #2d2d2d;
+  color: #f1f1f1;
+  border-color: #444;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #666;
+  box-shadow: 0 0 0 2px rgba(102, 102, 102, 0.2);
+}
+
+body.dark-theme .form-group input:focus {
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(153, 153, 153, 0.2);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: #333;
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn.pulse {
+  animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.btn-primary {
+  background-color: #333;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #555;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  margin-left: 1rem;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.form-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.form-footer a {
+  color: #666;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .form-footer a {
+  color: #ccc;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .error-message {
+  background-color: #2c1215;
+  color: #f8d7da;
+}
+
+/* Welcome section */
+.welcome-section {
+  text-align: center;
+  margin-bottom: 3rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.cta-buttons {
+  margin-top: 2rem;
+}
+
+/* Features */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0 -15px;
+}
+
+.feature {
+  flex: 1;
+  min-width: 300px;
+  margin: 0 15px 30px;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.feature.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.feature.animate-on-scroll.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.dark-theme .feature {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.feature h3 {
+  color: #333;
+  margin-top: 0;
+}
+
+body.dark-theme .feature h3 {
+  color: #f1f1f1;
+}
+
+/* Footer */
+.main-footer {
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  background-color: #f1f1f1;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .main-footer {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* Animazioni */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animate-on-scroll.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .features {
+    flex-direction: column;
+  }
+  
+  .feature {
+    min-width: auto;
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn-secondary {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .theme-toggle {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+  }
+}
