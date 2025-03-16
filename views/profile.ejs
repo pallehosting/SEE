@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span>Ciao, <%= username %></span>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="profile-content">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <% if (user.profile_pic) { %>
+            <img src="<%= user.profile_pic %>" alt="<%= user.username %>">
+          <% } else { %>
+            <div class="default-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+          <% } %>
+        </div>
+        
+        <div class="profile-info">
+          <h2 class="profile-username">@<%= user.username %></h2>
+          <div class="profile-stats">
+            <div class="stat-item">
+              <span class="stat-count"><%= videoCount %></span>
+              <span class="stat-label">Video</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-count"><%= followerCount %></span>
+              <span class="stat-label">Follower</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-count"><%= followingCount %></span>
+              <span class="stat-label">Seguiti</span>
+            </div>
+          </div>
+          
+          <% if (user.bio) { %>
+            <p class="profile-bio"><%= user.bio %></p>
+          <% } %>
+          
+          <% if (isOwnProfile) { %>
+            <a href="/edit-profile" class="btn btn-secondary edit-profile-btn">
+              <i class="fas fa-edit"></i> Modifica profilo
+            </a>
+          <% } else { %>
+            <button class="btn <%= isFollowing ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn' %>" data-user-id="<%= user.id %>">
+              <% if (isFollowing) { %>
+                <i class="fas fa-user-minus"></i> Non seguire più
+              <% } else { %>
+                <i class="fas fa-user-plus"></i> Segui
+              <% } %>
+            </button>
+          <% } %>
+        </div>
+      </div>
+      
+      <div class="profile-tabs">
+        <button class="tab-btn active" data-tab="videos">
+          <i class="fas fa-video"></i> Video
+        </button>
+        <button class="tab-btn" data-tab="liked">
+          <i class="fas fa-heart"></i> Piaciuti
+        </button>
+      </div>
+      
+      <div class="profile-tab-content">
+        <div class="tab-pane active" id="videos-tab">
+          <% if (videos && videos.length > 0) { %>
+            <div class="profile-videos-grid">
+              <% videos.forEach(video => { %>
+                <div class="profile-video-item" data-id="<%= video.id %>">
+                  <a href="/video/<%= video.id %>" class="profile-video-link">
+                    <div class="profile-video-thumbnail">
+                      <% if (video.thumbnail) { %>
+                        <img src="<%= video.thumbnail %>" alt="<%= video.title || 'Video' %>">
+                      <% } else { %>
+                        <div class="placeholder-thumbnail">
+                          <i class="fas fa-video"></i>
+                        </div>
+                      <% } %>
+                      <div class="video-duration">
+                        <i class="fas fa-play"></i>
+                      </div>
+                    </div>
+                    <div class="profile-video-info">
+                      <h3 class="profile-video-title"><%= video.title || 'Video senza titolo' %></h3>
+                      <div class="profile-video-meta">
+                        <span class="profile-video-views"><i class="fas fa-eye"></i> <%= video.views %></span>
+                        <span class="profile-video-likes"><i class="fas fa-heart"></i> <%= video.likes_count %></span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="no-videos-message">
+              <i class="fas fa-video-slash"></i>
+              <p><% if (isOwnProfile) { %>Non hai ancora caricato nessun video<% } else { %>Questo utente non ha ancora caricato video<% } %></p>
+              <% if (isOwnProfile) { %>
+                <a href="/upload" class="btn btn-primary">Carica il tuo primo video</a>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+        
+        <div class="tab-pane" id="liked-tab">
+          <% if (likedVideos && likedVideos.length > 0) { %>
+            <div class="profile-videos-grid">
+              <% likedVideos.forEach(video => { %>
+                <div class="profile-video-item" data-id="<%= video.id %>">
+                  <a href="/video/<%= video.id %>" class="profile-video-link">
+                    <div class="profile-video-thumbnail">
+                      <% if (video.thumbnail) { %>
+                        <img src="<%= video.thumbnail %>" alt="<%= video.title || 'Video' %>">
+                      <% } else { %>
+                        <div class="placeholder-thumbnail">
+                          <i class="fas fa-video"></i>
+                        </div>
+                      <% } %>
+                      <div class="video-duration">
+                        <i class="fas fa-play"></i>
+                      </div>
+                    </div>
+                    <div class="profile-video-info">
+                      <h3 class="profile-video-title"><%= video.title || 'Video senza titolo' %></h3>
+                      <div class="profile-video-meta">
+                        <span class="profile-video-username">@<%= video.username %></span>
+                        <span class="profile-video-likes"><i class="fas fa-heart"></i> <%= video.likes_count %></span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="no-videos-message">
+              <i class="fas fa-heart-broken"></i>
+              <p><% if (isOwnProfile) { %>Non hai ancora messo like a nessun video<% } else { %>Questo utente non ha ancora messo like a nessun video<% } %></p>
+              <% if (isOwnProfile) { %>
+                <a href="/feed" class="btn btn-primary">Esplora il feed</a>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="/explore" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span>Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item">
+        <i class="fas fa-plus-square"></i>
+        <span>Carica</span>
+      </a>
+      <a href="/saved" class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item active">
+        <i class="fas fa-user"></i>
+        <span>Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestione delle tab
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Rimuovi la classe active da tutti i pulsanti
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          // Aggiungi la classe active al pulsante cliccato
+          this.classList.add('active');
+          
+          // Nascondi tutti i tab pane
+          tabPanes.forEach(pane => pane.classList.remove('active'));
+          // Mostra il tab pane corrispondente
+          const tabId = this.getAttribute('data-tab') + '-tab';
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+      
+      // Gestione del pulsante segui/non seguire
+      const followButton = document.querySelector('.follow-btn, .unfollow-btn');
+      if (followButton) {
+        followButton.addEventListener('click', function() {
+          const userId = this.getAttribute('data-user-id');
+          const isFollowing = this.classList.contains('unfollow-btn');
+          
+          // Chiamata AJAX per seguire/non seguire l'utente
+          fetch('/api/follow', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.following) {
+              // Ora stai seguendo l'utente
+              this.classList.remove('btn-primary', 'follow-btn');
+              this.classList.add('btn-secondary', 'unfollow-btn');
+              this.innerHTML = '<i class="fas fa-user-minus"></i> Non seguire più';
+              
+              // Aggiorna il conteggio dei follower
+              const followerCountEl = document.querySelector('.stat-item:nth-child(2) .stat-count');
+              followerCountEl.textContent = parseInt(followerCountEl.textContent) + 1;
+            } else {
+              // Hai smesso di seguire l'utente
+              this.classList.remove('btn-secondary', 'unfollow-btn');
+              this.classList.add('btn-primary', 'follow-btn');
+              this.innerHTML = '<i class="fas fa-user-plus"></i> Segui';
+              
+              // Aggiorna il conteggio dei follower
+              const followerCountEl = document.querySelector('.stat-item:nth-child(2) .stat-count');
+              followerCountEl.textContent = parseInt(followerCountEl.textContent) - 1;
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

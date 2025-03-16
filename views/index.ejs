@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Stili specifici per la landing page */
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    body.dark-theme {
+      background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+    }
+    
+    .landing-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .landing-header {
+      padding: 2rem;
+      text-align: center;
+      z-index: 10;
+    }
+    
+    .landing-header h1 {
+      font-size: 4rem;
+      margin: 0;
+      color: #ff4757;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+      letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+    
+    .landing-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      z-index: 10;
+    }
+    
+    .auth-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transform: translateY(0);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    body.dark-theme .auth-container {
+      background-color: rgba(30, 30, 30, 0.9);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .auth-container h2 {
+      font-size: 2.5rem;
+      margin: 0 0 1rem 0;
+      color: #333;
+    }
+    
+    body.dark-theme .auth-container h2 {
+      color: #f1f1f1;
+    }
+    
+    .auth-container p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #666;
+    }
+    
+    body.dark-theme .auth-container p {
+      color: #aaa;
+    }
+    
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: #ff4757;
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    }
+    
+    .btn-primary:hover {
+      background-color: #ff2e43;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  <div class="landing-container">
+    <header class="landing-header">
+      <h1>SEE</h1>
+    </header>
+    
+    <main class="landing-content">
+      <div class="auth-container">
+        <h2>Benvenuto su SEE</h2>
+        <p>La piattaforma per condividere i tuoi momenti con il mondo</p>
+        
+        <div class="auth-buttons">
+          <a href="/login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Accedi</a>
+          <a href="/register" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Registrati</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+</html>;
+      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+    }
+    
+    .btn-secondary {
+      background-color: #f1f2f6;
+      color: #333;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.dark-theme .btn-secondary {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e2e5ea;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  <div class="landing-container">
+    <header class="landing-header">
+      <h1>SEE</h1>
+    </header>
+    
+    <main class="landing-content">
+      <div class="auth-container">
+        <h2>Benvenuto su SEE</h2>
+        <p>La piattaforma per condividere i tuoi momenti con il mondo</p>
+        
+        <div class="auth-buttons">
+          <a href="/login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Accedi</a>
+          <a href="/register" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Registrati</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+</html>
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  <div class="landing-container">
+    <header class="landing-header">
+      <h1>SEE</h1>
+    </header>
+    
+    <main class="landing-content">
+      <div class="auth-container">
+        <h2>Benvenuto su SEE</h2>
+        <p>La piattaforma per condividere i tuoi momenti con il mondo</p>
+        
+        <div class="auth-buttons">
+          <a href="/login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Accedi</a>
+          <a href="/register" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Registrati</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+</html>

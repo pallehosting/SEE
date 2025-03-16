@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span><span data-i18n="msg_hello">Ciao</span>, <%= username %></span>
+        <div id="language-selector-container"></div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="upload-content">
+      <div class="upload-form-container">
+        <h2>Carica un nuovo video</h2>
+        
+        <% if (error) { %>
+          <div class="error-message">
+            <%= error %>
+          </div>
+        <% } %>
+        
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+          <div class="form-group">
+            <label for="video">Seleziona un video</label>
+            <input type="file" id="video" name="video" accept="video/*" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="title">Titolo (opzionale)</label>
+            <input type="text" id="title" name="title" maxlength="100">
+          </div>
+          
+          <div class="form-group">
+            <label for="description">Descrizione (opzionale)</label>
+            <textarea id="description" name="description" rows="3" maxlength="500"></textarea>
+          </div>
+          
+          <div class="upload-preview">
+            <video id="preview-video" controls></video>
+          </div>
+          
+          <button type="submit" class="btn btn-primary upload-submit-btn">Carica</button>
+        </form>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="nav_home">Home</span>
+      </a>
+      <a href="/explore" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span data-i18n="nav_explore">Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item active">
+        <i class="fas fa-plus-square"></i>
+        <span data-i18n="nav_upload">Carica</span>
+      </a>
+      <a href="/saved" class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span data-i18n="nav_saved">Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span data-i18n="nav_profile">Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    // Script per la preview del video
+    document.addEventListener('DOMContentLoaded', function() {
+      const videoInput = document.getElementById('video');
+      const previewVideo = document.getElementById('preview-video');
+      const uploadPreview = document.querySelector('.upload-preview');
+      
+      videoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        
+        if (file) {
+          const fileURL = URL.createObjectURL(file);
+          previewVideo.src = fileURL;
+          uploadPreview.style.display = 'block';
+        } else {
+          uploadPreview.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

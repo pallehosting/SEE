@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Stili specifici per la pagina explore */
+    .explore-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: 80px; /* Spazio per la bottom nav */
+    }
+    
+    .search-container {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 15px 20px;
+      padding-left: 50px;
+      border: none;
+      border-radius: 50px;
+      background-color: #f5f5f5;
+      font-size: 1rem;
+      color: #333;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .search-input {
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+      font-size: 1.2rem;
+    }
+    
+    body.dark-theme .search-icon {
+      color: #aaa;
+    }
+    
+    .search-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .video-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body.dark-theme .video-card {
+      background-color: #1e1e1e;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .video-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .video-thumbnail {
+      width: 100%;
+      height: 160px;
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .video-thumbnail video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .video-info {
+      padding: 15px;
+    }
+    
+    .video-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      color: #333;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    body.dark-theme .video-title {
+      color: #f1f1f1;
+    }
+    
+    .video-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #777;
+    }
+    
+    body.dark-theme .video-meta {
+      color: #aaa;
+    }
+    
+    .video-user {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .video-user a {
+      color: #555;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    body.dark-theme .video-user a {
+      color: #ccc;
+    }
+    
+    .video-stats {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 50px 0;
+      color: #777;
+    }
+    
+    body.dark-theme .no-results {
+      color: #aaa;
+    }
+    
+    .no-results i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+    
+    body.dark-theme .no-results i {
+      color: #444;
+    }
+    
+    .trending-section {
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    body.dark-theme .section-title {
+      color: #f1f1f1;
+    }
+    
+    .section-title i {
+      color: #ff4757;
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span><span data-i18n="msg_hello">Ciao</span>, <%= username %></span>
+        <div id="language-selector-container"></div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="explore-content">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-input" class="search-input" data-i18n-placeholder="form_search" placeholder="Cerca video...">
+      </div>
+      
+      <div class="trending-section">
+        <h2 class="section-title"><i class="fas fa-fire"></i> <span data-i18n="title_trending">Tendenze</span></h2>
+        <div class="search-results" id="trending-videos">
+          <% if (trendingVideos && trendingVideos.length > 0) { %>
+            <% trendingVideos.forEach(video => { %>
+              <div class="video-card">
+                <a href="/video/<%= video.id %>" class="video-thumbnail">
+                  <video src="<%= video.file_path %>" muted></video>
+                </a>
+                <div class="video-info">
+                  <h3 class="video-title"><%= video.title || 'Video senza titolo' %></h3>
+                  <div class="video-meta">
+                    <div class="video-user">
+                      <a href="/profile/<%= video.username %>">@<%= video.username %></a>
+                    </div>
+                    <div class="video-stats">
+                      <span><i class="fas fa-eye"></i> <%= video.views %></span>
+                      <span><i class="fas fa-heart"></i> <%= video.likes_count %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="no-results">
+              <i class="fas fa-video-slash"></i>
+              <p data-i18n="msg_no_trending">Nessun video in tendenza al momento</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      
+      <div id="search-results-container" style="display: none;">
+        <h2 class="section-title"><i class="fas fa-search"></i> <span data-i18n="title_search_results">Risultati della ricerca</span></h2>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="nav_home">Home</span>
+      </a>
+      <a href="/explore" class="nav-item active">
+        <i class="fas fa-search"></i>
+        <span data-i18n="nav_explore">Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item">
+        <i class="fas fa-plus-square"></i>
+        <span data-i18n="nav_upload">Carica</span>
+      </a>
+      <a href="/saved" class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span data-i18n="nav_saved">Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span data-i18n="nav_profile">Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('search-input');
+      const searchResults = document.getElementById('search-results');
+      const searchResultsContainer = document.getElementById('search-results-container');
+      
+      // Funzione per caricare i video in base alla query di ricerca
+      function searchVideos(query) {
+        fetch(`/api/search?q=${encodeURIComponent(query)}`)
+          .then(response => response.json())
+          .then(videos => {
+            searchResultsContainer.style.display = 'block';
+            
+            if (videos.length === 0) {
+              searchResults.innerHTML = `
+                <div class="no-results">
+                  <i class="fas fa-search"></i>
+                  <p>Nessun risultato trovato per "${query}"</p>
+                </div>
+              `;
+              return;
+            }
+            
+            searchResults.innerHTML = '';
+            videos.forEach(video => {
+              const videoCard = document.createElement('div');
+              videoCard.className = 'video-card';
+              videoCard.innerHTML = `
+                <a href="/video/${video.id}" class="video-thumbnail">
+                  <video src="${video.file_path}" muted></video>
+                </a>
+                <div class="video-info">
+                  <h3 class="video-title">${video.title || 'Video senza titolo'}</h3>
+                  <div class="video-meta">
+                    <div class="video-user">
+                      <a href="/profile/${video.username}">@${video.username}</a>
+                    </div>
+                    <div class="video-stats">
+                      <span><i class="fas fa-eye"></i> ${video.views}</span>
+                      <span><i class="fas fa-heart"></i> ${video.likes_count}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+              searchResults.appendChild(videoCard);
+            });
+            
+            // Inizializza i video thumbnail al passaggio del mouse
+            initVideoThumbnails();
+          })
+          .catch(error => {
+            console.error('Errore nella ricerca:', error);
+            searchResults.innerHTML = `
+              <div class="no-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Si è verificato un errore durante la ricerca</p>
+              </div>
+            `;
+          });
+      }
+      
+      // Event listener per la ricerca
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const query = this.value.trim();
+          if (query) {
+            searchVideos(query);
+          }
+        }
+      });
+      
+      // Funzione per inizializzare i video thumbnail
+      function initVideoThumbnails() {
+        const videoThumbnails = document.querySelectorAll('.video-thumbnail video');
+        
+        videoThumbnails.forEach(video => {
+          video.addEventListener('mouseenter', function() {
+            this.play();
+          });
+          
+          video.addEventListener('mouseleave', function() {
+            this.pause();
+            this.currentTime = 0;
+          });
+        });
+      }
+      
+      // Inizializza i video thumbnail al caricamento della pagina
+      initVideoThumbnails();
+    });
+  </script>
+</body>
+</html>

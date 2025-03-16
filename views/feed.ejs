@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Stili specifici per la pagina feed */
+    .feed-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 100;
+      position: sticky;
+      top: 0;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .feed-header {
+      background-color: #1e1e1e;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feed-header h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ff4757;
+      letter-spacing: 1px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .user-info span {
+      font-weight: 500;
+      color: #555;
+    }
+    
+    body.dark-theme .user-info span {
+      color: #f1f1f1;
+    }
+    
+    .logout-btn {
+      color: #777;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .logout-btn {
+      color: #aaa;
+    }
+    
+    .logout-btn:hover {
+      color: #ff4757;
+      transform: scale(1.1);
+    }
+    
+    .feed-content {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      padding-bottom: 60px; /* Spazio per la bottom nav */
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .feed-content {
+      background-color: #121212;
+    }
+    
+    .video-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .video-item {
+      position: relative;
+      height: calc(100vh - 120px);
+      scroll-snap-align: start;
+      background-color: #000;
+      overflow: hidden;
+      border-radius: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .video-container {
+      height: 100%;
+      width: 100%;
+      position: relative;
+    }
+    
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .video-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 5;
+    }
+    
+    .play-pause-btn {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+    
+    .play-pause-btn:hover {
+      background-color: rgba(255, 71, 87, 0.8);
+      transform: scale(1.1);
+    }
+    
+    .video-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      color: white;
+      z-index: 2;
+    }
+    
+    .video-user {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .user-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      gap: 10px;
+    }
+    
+    .default-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1.2rem;
+      border: 2px solid white;
+    }
+    
+    .username {
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span><span data-i18n="msg_hello">Ciao</span>, <%= username %></span>
+        <div id="language-selector-container"></div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="feed-content">
+      <div class="video-feed">
+        <% if (videos && videos.length > 0) { %>
+          <% videos.forEach(video => { %>
+            <div class="video-item" data-id="<%= video.id %>">
+              <div class="video-container">
+                <video src="<%= video.file_path %>" loop muted playsinline></video>
+                <div class="video-controls">
+                  <button class="play-pause-btn"><i class="fas fa-play"></i></button>
+                </div>
+              </div>
+              <div class="video-info">
+                <div class="video-user">
+                  <a href="/profile/<%= video.username %>" class="user-link">
+                    <div class="default-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <span class="username">@<%= video.username %></span>
+                  </a>
+                </div>
+                <p class="video-description"><%= video.description || '' %></p>
+                <div class="video-actions">
+                  <button class="action-btn like-btn <%= video.user_liked ? 'liked' : '' %>" data-id="<%= video.id %>">
+                    <i class="<%= video.user_liked ? 'fas' : 'far' %> fa-heart"></i> 
+                    <span><%= video.likes_count %></span>
+                  </button>
+                  <button class="action-btn comment-btn" data-id="<%= video.id %>">
+                    <i class="far fa-comment"></i> 
+                    <span><%= video.comments_count %></span>
+                  </button>
+                  <button class="action-btn save-btn <%= video.user_saved ? 'saved' : '' %>" data-id="<%= video.id %>">
+                    <i class="<%= video.user_saved ? 'fas' : 'far' %> fa-bookmark"></i>
+                  </button>
+                  <button class="action-btn share-btn">
+                    <i class="fas fa-share"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Sezione commenti -->
+              <div class="comments-section" id="comments-<%= video.id %>" style="display: none;">
+                <div class="comments-container">
+                  <div class="comments-list" id="comments-list-<%= video.id %>"></div>
+                  <form class="comment-form" data-video-id="<%= video.id %>">
+                    <input type="text" class="comment-input" placeholder="Aggiungi un commento...">
+                    <button type="submit" class="comment-submit-btn">
+                      <i class="fas fa-paper-plane"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="no-videos-message">
+            <i class="fas fa-video-slash"></i>
+            <p>Non ci sono ancora video da mostrare</p>
+            <a href="/upload" class="btn btn-primary">Carica il tuo primo video</a>
+          </div>
+        <% } %>
+      </div>
+      
+      <div class="upload-btn-container">
+        <a href="/upload" class="upload-btn">
+          <i class="fas fa-plus"></i>
+        </a>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="/explore" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span>Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item">
+        <i class="fas fa-plus-square"></i>
+        <span>Carica</span>
+      </a>
+      <a href="/saved" class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script src="/js/session.js"></script>
+  <script src="/js/comments.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestione dei video nel feed
+      const videoItems = document.querySelectorAll('.video-item');
+      const videos = document.querySelectorAll('.video-container video');
+      const playPauseBtns = document.querySelectorAll('.play-pause-btn');
+      
+      // Funzione per riprodurre il video quando è visibile
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target.querySelector('video');
+          const playPauseBtn = entry.target.querySelector('.play-pause-btn');
+          
+          if (entry.isIntersecting) {
+            // Il video è visibile nella viewport
+            video.play();
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          } else {
+            // Il video non è più visibile
+            video.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          }
+        });
+      }, { threshold: 0.7 }); // Almeno il 70% del video deve essere visibile
+      
+      // Osserva tutti i video
+      videoItems.forEach(item => {
+        observer.observe(item);
+      });
+      
+      // Gestione del pulsante play/pause
+      playPauseBtns.forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+          const video = videos[index];
+          
+          if (video.paused) {
+            video.play();
+            this.innerHTML = '<i class="fas fa-pause"></i>';
+          } else {
+            video.pause();
+            this.innerHTML = '<i class="fas fa-play"></i>';
+          }
+        });
+      });
+      
+      // Gestione dei like
+      const likeBtns = document.querySelectorAll('.like-btn');
+      likeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const videoId = this.getAttribute('data-id');
+          const likeIcon = this.querySelector('i');
+          const likeCount = this.querySelector('span');
+          
+          // Chiamata AJAX per mettere like/togliere like al video
+          fetch('/api/like', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ videoId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.liked) {
+              // Aggiunto like
+              likeIcon.classList.remove('far');
+              likeIcon.classList.add('fas');
+              likeCount.textContent = parseInt(likeCount.textContent) + 1;
+              this.classList.add('liked');
+            } else {
+              // Rimosso like
+              likeIcon.classList.remove('fas');
+              likeIcon.classList.add('far');
+              likeCount.textContent = parseInt(likeCount.textContent) - 1;
+              this.classList.remove('liked');
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      });
+      
+      // Gestione dei salvataggi
+      const saveBtns = document.querySelectorAll('.save-btn');
+      saveBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const videoId = this.getAttribute('data-id');
+          const saveIcon = this.querySelector('i');
+          
+          // Chiamata AJAX per salvare/rimuovere il video
+          fetch('/api/save', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ videoId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.saved) {
+              // Video salvato
+              saveIcon.classList.remove('far');
+              saveIcon.classList.add('fas');
+              this.classList.add('saved');
+            } else {
+              // Video rimosso dai salvati
+              saveIcon.classList.remove('fas');
+              saveIcon.classList.add('far');
+              this.classList.remove('saved');
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      });
+      
+      // Animazione per il pulsante di upload
+      const uploadBtn = document.querySelector('.upload-btn');
+      if (uploadBtn) {
+        uploadBtn.addEventListener('mouseenter', function() {
+          this.classList.add('pulse');
+        });
+        
+        uploadBtn.addEventListener('mouseleave', function() {
+          this.classList.remove('pulse');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

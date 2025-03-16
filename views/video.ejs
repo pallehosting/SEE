@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Stili specifici per la pagina del video */
+    .video-page-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: 80px; /* Spazio per la bottom nav */
+    }
+    
+    .video-player-container {
+      width: 100%;
+      background-color: #000;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .video-player {
+      width: 100%;
+      display: block;
+    }
+    
+    .video-details {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    body.dark-theme .video-details {
+      background-color: #1e1e1e;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .video-title {
+      font-size: 1.5rem;
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    
+    body.dark-theme .video-title {
+      color: #f1f1f1;
+    }
+    
+    .video-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    body.dark-theme .video-meta {
+      border-bottom-color: #333;
+    }
+    
+    .video-stats {
+      display: flex;
+      gap: 15px;
+      color: #777;
+    }
+    
+    body.dark-theme .video-stats {
+      color: #aaa;
+    }
+    
+    .video-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .default-avatar {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+      color: #777;
+      font-size: 1.2rem;
+    }
+    
+    body.dark-theme .default-avatar {
+      background-color: #2a2a2a;
+      color: #aaa;
+    }
+    
+    .user-name {
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    
+    body.dark-theme .user-name {
+      color: #f1f1f1;
+    }
+    
+    .video-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .action-btn {
+      color: #aaa;
+    }
+    
+    .action-btn:hover {
+      color: #ff4757;
+    }
+    
+    .action-btn.active {
+      color: #ff4757;
+    }
+    
+    .video-description {
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    body.dark-theme .video-description {
+      color: #bbb;
+    }
+    
+    /* Commenti */
+    .comments-section {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    body.dark-theme .comments-section {
+      background-color: #1e1e1e;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .comments-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .comments-title {
+      font-size: 1.2rem;
+      margin: 0;
+      color: #333;
+    }
+    
+    body.dark-theme .comments-title {
+      color: #f1f1f1;
+    }
+    
+    .comment-form {
+      margin-bottom: 20px;
+    }
+    
+    .comment-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 50px;
+      background-color: #f9f9f9;
+      font-size: 0.9rem;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-theme .comment-input {
+      border-color: #444;
+      background-color: #2a2a2a;
+      color: #f1f1f1;
+    }
+    
+    .comment-input:focus {
+      outline: none;
+      border-color: #ff4757;
+      box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2);
+    }
+    
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .comment-item {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .comment-content {
+      flex: 1;
+    }
+    
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    
+    .comment-user {
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    
+    body.dark-theme .comment-user {
+      color: #f1f1f1;
+    }
+    
+    .comment-time {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    
+    body.dark-theme .comment-time {
+      color: #777;
+    }
+    
+    .comment-text {
+      color: #555;
+      line-height: 1.4;
+    }
+    
+    body.dark-theme .comment-text {
+      color: #bbb;
+    }
+    
+    .no-comments {
+      text-align: center;
+      padding: 20px 0;
+      color: #999;
+    }
+    
+    body.dark-theme .no-comments {
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span>Ciao, <%= username %></span>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="video-page-content">
+      <div class="video-player-container">
+        <video class="video-player" src="<%= video.file_path %>" controls autoplay></video>
+      </div>
+      
+      <div class="video-details">
+        <h1 class="video-title"><%= video.title || 'Video senza titolo' %></h1>
+        
+        <div class="video-meta">
+          <div class="video-stats">
+            <span><i class="fas fa-eye"></i> <%= video.views %> visualizzazioni</span>
+            <span><i class="fas fa-calendar-alt"></i> <%= new Date(video.created_at).toLocaleDateString('it-IT') %></span>
+          </div>
+          
+          <div class="video-actions">
+            <button class="action-btn <%= userLiked ? 'active' : '' %>" id="like-btn" data-video-id="<%= video.id %>">
+              <i class="fas fa-heart"></i>
+              <span id="likes-count"><%= video.likes || 0 %></span>
+            </button>
+            <button class="action-btn <%= userSaved ? 'active' : '' %>" id="save-btn" data-video-id="<%= video.id %>">
+              <i class="fas fa-bookmark"></i>
+              <span><%= userSaved ? 'Salvato' : 'Salva' %></span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="video-description">
+          <%= video.description || 'Nessuna descrizione disponibile.' %>
+        </div>
+      </div>
+      
+      <div class="comments-section">
+        <div class="comments-header">
+          <h2 class="comments-title">Commenti</h2>
+        </div>
+        
+        <div class="comment-form">
+          <input type="text" class="comment-input" id="comment-input" placeholder="Aggiungi un commento..." data-video-id="<%= video.id %>">
+        </div>
+        
+        <div class="comments-list" id="comments-list">
+          <% if (comments && comments.length > 0) { %>
+            <% comments.forEach(function(comment) { %>
+              <div class="comment-item">
+                <div class="user-avatar">
+                  <div class="default-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </div>
+                <div class="comment-content">
+                  <div class="comment-header">
+                    <a href="/profile/<%= comment.username %>" class="comment-user">@<%= comment.username %></a>
+                    <span class="comment-time"><%= new Date(comment.created_at).toLocaleDateString('it-IT') %></span>
+                  </div>
+                  <p class="comment-text"><%= comment.content %></p>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="no-comments" id="no-comments">
+              <p>Non ci sono ancora commenti. Sii il primo a commentare!</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="/explore" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span>Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item">
+        <i class="fas fa-plus-square"></i>
+        <span>Carica</span>
+      </a>
+      <a href="/saved" class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestione del pulsante like
+      const likeBtn = document.getElementById('like-btn');
+      if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+          const videoId = this.getAttribute('data-video-id');
+          
+          // Chiamata AJAX per mettere like/togliere like al video
+          fetch('/api/like', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ videoId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            const likesCountEl = document.getElementById('likes-count');
+            
+            if (data.liked) {
+              // Aggiunto like
+              this.classList.add('active');
+              likesCountEl.textContent = parseInt(likesCountEl.textContent) + 1;
+            } else {
+              // Rimosso like
+              this.classList.remove('active');
+              likesCountEl.textContent = parseInt(likesCountEl.textContent) - 1;
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      }
+      
+      // Gestione del pulsante salva
+      const saveBtn = document.getElementById('save-btn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          const videoId = this.getAttribute('data-video-id');
+          
+          // Chiamata AJAX per salvare/rimuovere il video
+          fetch('/api/save', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ videoId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.saved) {
+              // Video salvato
+              this.classList.add('active');
+              this.querySelector('span').textContent = 'Salvato';
+            } else {
+              // Video rimosso dai salvati
+              this.classList.remove('active');
+              this.querySelector('span').textContent = 'Salva';
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      }
+      
+      // Gestione dell'input per i commenti
+      const commentInput = document.getElementById('comment-input');
+      if (commentInput) {
+        commentInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter' && this.value.trim() !== '') {
+            const videoId = this.getAttribute('data-video-id');
+            const content = this.value.trim();
+            
+            // Animazione di caricamento
+            const commentsSection = document.querySelector('.comments-list');
+            const loadingEl = document.createElement('div');
+            loadingEl.className = 'loading-comment';
+            loadingEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Invio commento...';
+            commentsSection.insertBefore(loadingEl, commentsSection.firstChild);
+            
+            // Chiamata AJAX per aggiungere un commento
+            fetch('/api/comment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ videoId, content })
+            })
+            .then(response => response.json())
+            .then(data => {
+              // Rimuovi l'animazione di caricamento
+              loadingEl.remove();
+              
+              // Aggiungi il nuovo commento alla lista
+              const commentsList = document.getElementById('comments-list');
+              const noComments = document.getElementById('no-comments');
+              
+              // Rimuovi il messaggio "nessun commento" se presente
+              if (noComments) {
+                noComments.remove();
+              }
+              
+              // Crea l'elemento del nuovo commento con animazione
+              const commentItem = document.createElement('div');
+              commentItem.className = 'comment-item new-comment';
+              commentItem.innerHTML = `
+                <div class="user-avatar">
+                  <div class="default-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </div>
+                <div class="comment-content">
+                  <div class="comment-header">
+                    <a href="/profile/${data.username}" class="comment-user">@${data.username}</a>
+                    <span class="comment-time">${new Date().toLocaleDateString('it-IT')}</span>
+                  </div>
+                  <p class="comment-text">${data.content}</p>
+                </div>
+              `;
+              
+              // Aggiungi il commento all'inizio della lista con animazione
+              commentsList.insertBefore(commentItem, commentsList.firstChild);
+              
+              // Pulisci l'input
+              this.value = '';
+              
+              // Aggiungi una classe per l'animazione
+              setTimeout(() => {
+                commentItem.classList.remove('new-comment');
+              }, 300);
+            })
+            .catch(error => {
+              console.error('Errore:', error);
+              loadingEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Errore nell\'invio del commento';
+              setTimeout(() => {
+                loadingEl.remove();
+              }, 3000);
+            });
+          }
+        });
+      }
+    });
+  </script>();
+            
+            // Chiamata AJAX per aggiungere un commento
+            fetch('/api/comment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ videoId, content })
+            })
+            .then(response => response.json())
+            .then(data => {
+              // Aggiungi il nuovo commento alla lista
+              const commentsList = document.getElementById('comments-list');
+              const noComments = document.getElementById('no-comments');
+              
+              // Rimuovi il messaggio "nessun commento" se presente
+              if (noComments) {
+                noComments.remove();
+              }
+              
+              // Crea l'elemento del nuovo commento
+              const commentItem = document.createElement('div');
+              commentItem.className = 'comment-item';
+              commentItem.innerHTML = `
+                <div class="user-avatar">
+                  <div class="default-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </div>
+                <div class="comment-content">
+                  <div class="comment-header">
+                    <a href="/profile/${data.username}" class="comment-user">@${data.username}</a>
+                    <span class="comment-time">${new Date().toLocaleDateString('it-IT')}</span>
+                  </div>
+                  <p class="comment-text">${data.content}</p>
+                </div>
+              `;
+              
+              // Aggiungi il commento all'inizio della lista
+              commentsList.insertBefore(commentItem, commentsList.firstChild);
+              
+              // Pulisci l'input
+              this.value = '';
+            })
+            .catch(error => {
+              console.error('Errore:', error);
+            });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

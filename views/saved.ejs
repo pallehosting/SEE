@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/language-selector.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+  
+  <div class="feed-container">
+    <header class="feed-header">
+      <h1>SEE</h1>
+      <div class="user-info">
+        <span><span data-i18n="msg_hello">Ciao</span>, <%= username %></span>
+        <div id="language-selector-container"></div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </header>
+    
+    <main class="saved-content">
+      <h2 class="saved-title">Video Salvati</h2>
+      
+      <div class="saved-videos">
+        <% if (videos && videos.length > 0) { %>
+          <% videos.forEach(video => { %>
+            <div class="saved-video-item" data-id="<%= video.id %>">
+              <div class="saved-video-thumbnail">
+                <% if (video.thumbnail) { %>
+                  <img src="<%= video.thumbnail %>" alt="Thumbnail">
+                <% } else { %>
+                  <div class="placeholder-thumbnail">
+                    <i class="fas fa-video"></i>
+                  </div>
+                <% } %>
+                <a href="/video/<%= video.id %>" class="play-overlay">
+                  <i class="fas fa-play"></i>
+                </a>
+              </div>
+              <div class="saved-video-info">
+                <h3 class="saved-video-title"><%= video.title || 'Video senza titolo' %></h3>
+                <div class="saved-video-meta">
+                  <span class="saved-video-username">@<%= video.username %></span>
+                  <span class="saved-video-likes"><i class="fas fa-heart"></i> <%= video.likes_count %></span>
+                </div>
+                <button class="remove-saved-btn" data-id="<%= video.id %>">
+                  <i class="fas fa-times"></i> Rimuovi
+                </button>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="no-saved-videos">
+            <i class="far fa-bookmark"></i>
+            <p>Non hai ancora salvato nessun video</p>
+            <a href="/feed" class="btn btn-primary">Esplora il feed</a>
+          </div>
+        <% } %>
+      </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <a href="/feed" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span data-i18n="nav_home">Home</span>
+      </a>
+      <a href="/explore" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span data-i18n="nav_explore">Esplora</span>
+      </a>
+      <a href="/upload" class="nav-item">
+        <i class="fas fa-plus-square"></i>
+        <span data-i18n="nav_upload">Carica</span>
+      </a>
+      <a href="/saved" class="nav-item active">
+        <i class="fas fa-bookmark"></i>
+        <span data-i18n="nav_saved">Salvati</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span data-i18n="nav_profile">Profilo</span>
+      </a>
+    </nav>
+  </div>
+  
+  <script src="/js/main.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    // Script per la rimozione dei video salvati
+    document.addEventListener('DOMContentLoaded', function() {
+      const removeButtons = document.querySelectorAll('.remove-saved-btn');
+      
+      removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const videoId = this.getAttribute('data-id');
+          const videoItem = this.closest('.saved-video-item');
+          
+          // Chiamata AJAX per rimuovere il video dai salvati
+          fetch('/api/save', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ videoId: videoId })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (!data.saved) {
+              // Rimuovi l'elemento dalla UI con animazione
+              videoItem.style.opacity = '0';
+              setTimeout(() => {
+                videoItem.remove();
+                
+                // Se non ci sono più video, mostra il messaggio
+                const savedVideos = document.querySelectorAll('.saved-video-item');
+                if (savedVideos.length === 0) {
+                  const noVideosDiv = document.createElement('div');
+                  noVideosDiv.className = 'no-saved-videos';
+                  noVideosDiv.innerHTML = `
+                    <i class="far fa-bookmark"></i>
+                    <p>Non hai ancora salvato nessun video</p>
+                    <a href="/feed" class="btn btn-primary">Esplora il feed</a>
+                  `;
+                  document.querySelector('.saved-videos').appendChild(noVideosDiv);
+                }
+              }, 300);
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        });
+      });
+    });
+  </script>
